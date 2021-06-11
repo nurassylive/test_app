@@ -10,14 +10,6 @@ class Menus extends GetxController {
   final menus = [].obs;
   final cart = [].obs;
 
-  // List<Menu> get menus {
-  //   return _menus.obs;
-  // }
-
-  // List<Menu> get cart {
-  //   return _cart.obs;
-  // }
-
   String _getImageName() {
     final rnd = Random();
     final number = rnd.nextInt(2);
@@ -52,11 +44,6 @@ class Menus extends GetxController {
 
   void addToCart(Menu menu) {
     if (!cart.contains(menu)) cart.add(menu);
-    // for (Menu cartMenu in _cart) {
-    //   if (cartMenu.id != menu.id) {
-    //     _cart.add(menu);
-    //   }
-    // }
   }
 
   void deleteFromCart(String id) {
