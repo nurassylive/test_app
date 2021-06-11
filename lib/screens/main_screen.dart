@@ -1,7 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:test_app/screens/cart_screen.dart';
 
 import '../providers/menus.dart';
 
@@ -11,12 +11,17 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  String _getImageName() {
-    final rnd = Random();
-    final number = rnd.nextInt(2);
-    print('number: $number');
-    if (number == 0) return 'assets/images/01.png';
-    return 'assets/images/02.png';
+  final menusController = Get.put(Menus());
+
+  @override
+  void initState() {
+    setup();
+    super.initState();
+  }
+
+  void setup() async {
+    await menusController.fetchData();
+    setState(() {});
   }
 
   @override
@@ -25,78 +30,85 @@ class _MainScreenState extends State<MainScreen> {
     final width = deviceSize.width / 3;
     final height = deviceSize.height * 0.3;
 
-    final menusController = Get.put(Menus());
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Menus'),
+        actions: [
+          CupertinoButton(
+            child: Icon(
+              menusController.cart.isEmpty
+                  ? CupertinoIcons.cart
+                  : CupertinoIcons.cart_fill,
+              color: menusController.cart.isEmpty ? Colors.white : Colors.amber,
+            ),
+            onPressed: () {
+              Get.to(() => CartScreen());
+            },
+          ),
+        ],
       ),
-      body: FutureBuilder(
-        future: menusController.fetchData(),
-        // ignore: missing_return
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting)
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          if (snapshot.connectionState == ConnectionState.done)
-            return Center(
+      body: Center(
+        child: Container(
+          height: height,
+          clipBehavior: Clip.none,
+          child: ListView.builder(
+            itemCount: menusController.menus.length,
+            clipBehavior: Clip.none,
+            itemBuilder: (ctx, index) => CupertinoButton(
+              padding: EdgeInsets.zero,
               child: Container(
-                height: height,
-                clipBehavior: Clip.none,
-                child: ListView.builder(
-                  itemCount: menusController.menus.length,
-                  clipBehavior: Clip.none,
-                  itemBuilder: (ctx, index) => Container(
-                    width: width,
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 10,
+                width: width,
+                margin: EdgeInsets.symmetric(
+                  horizontal: 10,
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 5,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(1, 2),
                     ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 5,
-                      vertical: 5,
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: height * 0.7,
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        menusController.menus[index].assetName,
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: Offset(1, 2),
-                        ),
-                      ],
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
+                    Text(
+                      menusController.menus[index].title.trim(),
+                      style: TextStyle(
+                        fontSize: deviceSize.width * 0.04,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                      maxLines: 2,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: height * 0.7,
-                          alignment: Alignment.center,
-                          child: Image.asset(
-                            _getImageName(),
-                          ),
-                        ),
-                        Text(
-                          menusController.menus[index].title
-                              .trim()
-                              .toLowerCase()
-                              .capitalizeFirst,
-                          style: TextStyle(
-                            fontSize: deviceSize.width * 0.04,
-                          ),
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
-                  ),
-                  scrollDirection: Axis.horizontal,
+                  ],
                 ),
               ),
-            );
-        },
+              onPressed: () {
+                setState(() {
+                  menusController.addToCart(menusController.menus[index]);
+                });
+              },
+            ),
+            scrollDirection: Axis.horizontal,
+          ),
+        ),
       ),
     );
   }
