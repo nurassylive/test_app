@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    // if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return;
 
     final success = await BlocProvider.of<LoginCubit>(context).login(email: _loginController.text, password: _passwordController.text);
     if (success) {

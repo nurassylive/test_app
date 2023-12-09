@@ -14,13 +14,9 @@ abstract class LoginApiProvider {
 class LoginApiProviderImpl implements LoginApiProvider {
   @override
   Future<MainUser> login({required String email, required String password}) async {
-    // final body = {
-    //   "email": email,
-    //   "password": password,
-    // };
     final body = {
-      "email": 'test@test.ru',
-      "password": 'admin',
+      "email": email,
+      "password": password,
     };
 
     final object = await DioClient.instance.provideData(
