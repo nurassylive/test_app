@@ -65,28 +65,45 @@ class NavigationService {
   ShellRoute _home() {
     return ShellRoute(
       navigatorKey: NavigationKeyProvider.home,
-      builder: (_, __, child) => child,
+      builder: (_, __, child) => WrapperPage(child: child),
       routes: [
         ShellRoute(
-          navigatorKey: NavigationKeyProvider.favorites,
+          navigatorKey: NavigationKeyProvider.news,
           pageBuilder: (_, __, child) => NoTransitionPage(child: child),
-          builder: (_, __, child) => WrapperPage(child: child),
           routes: [
             GoRoute(
               name: AppRoutes.news.name,
               path: AppRoutes.news.path,
               builder: (_, __) => const NewsPage(),
             ),
+          ],
+        ),
+        ShellRoute(
+          navigatorKey: NavigationKeyProvider.map,
+          pageBuilder: (_, __, child) => NoTransitionPage(child: child),
+          routes: [
             GoRoute(
               name: AppRoutes.map.name,
               path: AppRoutes.map.path,
               builder: (_, __) => const MapPage(),
             ),
+          ],
+        ),
+        ShellRoute(
+          navigatorKey: NavigationKeyProvider.favorites,
+          pageBuilder: (_, __, child) => NoTransitionPage(child: child),
+          routes: [
             GoRoute(
               name: AppRoutes.favorites.name,
               path: AppRoutes.favorites.path,
               builder: (_, __) => const FavoritesPage(),
             ),
+          ],
+        ),
+        ShellRoute(
+          navigatorKey: NavigationKeyProvider.profile,
+          pageBuilder: (_, __, child) => NoTransitionPage(child: child),
+          routes: [
             GoRoute(
               name: AppRoutes.profile.name,
               path: AppRoutes.profile.path,
